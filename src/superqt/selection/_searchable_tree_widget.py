@@ -53,7 +53,7 @@ class QSearchableTreeWidget(QWidget):
         expression = QRegularExpression(pattern)
         for i in range(self.tree.topLevelItemCount()):
             top_level_item = self.tree.topLevelItem(i)
-            _update_visible_items(top_level_item, expression)
+            update_tree_item_visibility(top_level_item, expression)
 
     @classmethod
     def fromData(
@@ -88,14 +88,27 @@ def _make_item(*, name: str, value: Any) -> QTreeWidgetItem:
     return item
 
 
-def _update_visible_items(
+def update_tree_item_visibility(
     item: QTreeWidgetItem, expression: QRegularExpression, ancestor_match: bool = False
 ) -> bool:
     """Recursively update the visibility of a tree item based on an expression.
 
     An item is visible if any of its, any of its ancestors', or any of its descendants'
     column's text matches the expression.
-    Returns True if the item is visible, False otherwise.
+
+    Parameters
+    ----------
+    item : QTreeWidgetItem
+        The item to update. Its descendants will also be updated.
+    expression : QRegularExpression
+        The expression to match column text against.
+    ancestor_match : bool
+        True if some ancestor of the given item matched the regular expression,
+        False otherwise.
+
+    Returns
+    -------
+    True if the item is visible, False otherwise.
     """
     match = ancestor_match or any(
         expression.match(item.text(i)).hasMatch() for i in range(item.columnCount())
@@ -103,7 +116,7 @@ def _update_visible_items(
     visible = match
     for i in range(item.childCount()):
         child = item.child(i)
-        descendant_visible = _update_visible_items(child, expression, match)
+        descendant_visible = update_tree_item_visibility(child, expression, match)
         visible = visible or descendant_visible
     item.setHidden(not visible)
     logging.debug(

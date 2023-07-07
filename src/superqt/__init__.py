@@ -12,7 +12,11 @@ if TYPE_CHECKING:
 from ._eliding_label import QElidingLabel
 from .collapsible import QCollapsible
 from .combobox import QEnumComboBox, QSearchableComboBox
-from .selection import QSearchableListWidget, QSearchableTreeWidget
+from .selection import (
+    QSearchableListWidget,
+    QSearchableTreeWidget,
+    update_tree_item_visibility,
+)
 from .sliders import (
     QDoubleRangeSlider,
     QDoubleSlider,
@@ -28,6 +32,7 @@ from .utils import QMessageHandler, ensure_main_thread, ensure_object_thread
 __all__ = [
     "ensure_main_thread",
     "ensure_object_thread",
+    "update_tree_item_visibility",
     "QDoubleRangeSlider",
     "QCollapsible",
     "QDoubleSlider",
